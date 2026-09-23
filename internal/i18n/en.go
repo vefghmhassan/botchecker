@@ -169,6 +169,25 @@ var english = map[string]string{
 	"settings.language":     "Interface language",
 	"settings.languagehelp": "Applies to this dashboard and to the Telegram bot.",
 
+	// settings export / import
+	"transfer.title":          "Move settings",
+	"transfer.blurb":          "Download every setting as one file and load it into another botchecker. Values from the environment are included too, so the other install behaves the same.",
+	"transfer.exportpass":     "Passphrase for the tokens (optional)",
+	"transfer.exportpasshelp": "Leave empty to export without any token or password. With a passphrase of at least 8 characters, tokens are included, encrypted with it — you will need it to import.",
+	"transfer.export":         "Download settings",
+	"transfer.file":           "Settings file",
+	"transfer.importpass":     "Passphrase",
+	"transfer.importhelp":     "Only needed if the file was exported with one. Values in the file replace the current ones; nothing else is touched.",
+	"transfer.import":         "Import settings",
+	"transfer.nofile":         "Choose a settings file first.",
+	"transfer.toobig":         "That file is too large to be a settings export.",
+	"transfer.notexport":      "That file is not a botchecker settings export.",
+	"transfer.needpass":       "This file carries encrypted tokens: enter the passphrase it was exported with.",
+	"transfer.wrongpass":      "Wrong passphrase — nothing was changed.",
+	"transfer.done":           "Imported: %d changed, %d already the same.",
+	"transfer.leftout":        "Not in the file, enter by hand: %s.",
+	"transfer.unknown":        "Skipped, not known to this version: %s.",
+
 	// settings groups
 	"group.general.title":   "General",
 	"group.general.blurb":   "How this panel presents itself.",

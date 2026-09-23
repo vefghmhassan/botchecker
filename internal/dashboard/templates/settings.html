@@ -4,6 +4,39 @@
 {{if .Flash}}<div class="note">{{.Flash}}</div>{{end}}
 {{if .FlashErr}}<div class="note err">{{.FlashErr}}</div>{{end}}
 
+<h2>{{t "transfer.title"}}</h2>
+<div class="panel">
+  <p class="sub">{{t "transfer.blurb"}}</p>
+
+  <form method="post" action="/settings/export">
+    <input type="hidden" name="csrf" value="{{$.CSRF}}">
+    <div class="field">
+      <label for="export_passphrase">{{t "transfer.exportpass"}}</label>
+      <div class="row">
+        <input type="password" id="export_passphrase" name="passphrase" autocomplete="new-password" minlength="8">
+      </div>
+      <div class="muted help">{{t "transfer.exportpasshelp"}}</div>
+    </div>
+    <div class="actions"><button type="submit">{{t "transfer.export"}}</button></div>
+  </form>
+
+  <form method="post" action="/settings/import" enctype="multipart/form-data">
+    <input type="hidden" name="csrf" value="{{$.CSRF}}">
+    <div class="field">
+      <label for="import_file">{{t "transfer.file"}}</label>
+      <div class="row"><input type="file" id="import_file" name="file" accept="application/json,.json" required></div>
+    </div>
+    <div class="field">
+      <label for="import_passphrase">{{t "transfer.importpass"}}</label>
+      <div class="row">
+        <input type="password" id="import_passphrase" name="passphrase" autocomplete="off">
+      </div>
+      <div class="muted help">{{t "transfer.importhelp"}}</div>
+    </div>
+    <div class="actions"><button type="submit" class="secondary">{{t "transfer.import"}}</button></div>
+  </form>
+</div>
+
 {{range .Groups}}
 <h2>{{.Title}}</h2>
 <div class="panel">

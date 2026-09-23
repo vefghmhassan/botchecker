@@ -169,6 +169,25 @@ var persian = map[string]string{
 	"settings.language":     "زبان رابط کاربری",
 	"settings.languagehelp": "هم روی این داشبورد اعمال می‌شود هم روی ربات تلگرام.",
 
+	// settings export / import
+	"transfer.title":          "انتقال تنظیمات",
+	"transfer.blurb":          "همه‌ی تنظیمات را در یک فایل بگیرید و در یک botchecker دیگر وارد کنید. مقدارهایی که از env می‌آیند هم داخل فایل هستند تا آن‌طرف دقیقاً همین‌طور کار کند.",
+	"transfer.exportpass":     "رمز برای توکن‌ها (اختیاری)",
+	"transfer.exportpasshelp": "خالی بگذارید تا فایل بدون هیچ توکن و رمزی ساخته شود. با رمز حداقل ۸ حرفی، توکن‌ها هم رمزشده داخل فایل می‌روند — برای وارد کردن همین رمز لازم است.",
+	"transfer.export":         "دانلود تنظیمات",
+	"transfer.file":           "فایل تنظیمات",
+	"transfer.importpass":     "رمز",
+	"transfer.importhelp":     "فقط اگر فایل با رمز ساخته شده لازم است. مقدارهای فایل جای مقدارهای فعلی را می‌گیرند و به بقیه دست زده نمی‌شود.",
+	"transfer.import":         "وارد کردن تنظیمات",
+	"transfer.nofile":         "اول یک فایل تنظیمات انتخاب کنید.",
+	"transfer.toobig":         "این فایل برای یک فایل تنظیمات بیش از حد بزرگ است.",
+	"transfer.notexport":      "این فایل، فایل تنظیمات botchecker نیست.",
+	"transfer.needpass":       "این فایل توکن رمزشده دارد: رمزی را که با آن ساخته شده وارد کنید.",
+	"transfer.wrongpass":      "رمز اشتباه است — چیزی تغییر نکرد.",
+	"transfer.done":           "وارد شد: %d مورد تغییر کرد، %d مورد از قبل همین بود.",
+	"transfer.leftout":        "داخل فایل نبود، دستی وارد کنید: %s.",
+	"transfer.unknown":        "رد شد، این نسخه آن را نمی‌شناسد: %s.",
+
 	// settings groups
 	"group.general.title":   "عمومی",
 	"group.general.blurb":   "این پنل خودش را چطور نمایش می‌دهد.",

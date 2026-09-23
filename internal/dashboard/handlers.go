@@ -206,6 +206,8 @@ func (h *Handler) Register(app *fiber.App) {
 	app.Get("/settings", h.settingsPage)
 	app.Post("/settings", h.saveSettings)
 	app.Post("/settings/test", h.testSettings)
+	app.Post("/settings/export", h.exportSettings)
+	app.Post("/settings/import", h.importSettings)
 	app.Get("/target/:addr/:port", h.target)
 	app.Post("/target/:addr/:port/notify-only", h.toggleNotifyOnly)
 }
