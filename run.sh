@@ -39,11 +39,11 @@ done
 
 # Refuse to start a second copy: two instances on one bot token fight over
 # getUpdates, and the taps land on whichever happens to poll first.
-if pid=$(lsof -nP -iTCP:"${APP_PORT:-8090}" -sTCP:LISTEN -t 2>/dev/null); then
-    echo "something is already listening on port ${APP_PORT:-8090} (pid $pid)" >&2
+if pid=$(lsof -nP -iTCP:"${APP_PORT:-8081}" -sTCP:LISTEN -t 2>/dev/null); then
+    echo "something is already listening on port ${APP_PORT:-8081} (pid $pid)" >&2
     echo "stop it first: kill $pid" >&2
     exit 1
 fi
 
-echo "starting botchecker: port=${APP_PORT:-8090} db=${DB_PATH:-data/botchecker.db}" >&2
+echo "starting botchecker: port=${APP_PORT:-8081} db=${DB_PATH:-data/botchecker.db}" >&2
 exec ./botchecker

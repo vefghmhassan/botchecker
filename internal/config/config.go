@@ -107,7 +107,7 @@ func Load() (*Config, error) {
 
 		EncryptionKey: env("ENCRYPTION_KEY", ""),
 
-		AppPort:  env("APP_PORT", "8080"),
+		AppPort:  env("APP_PORT", "8081"),
 		DBPath:   env("DB_PATH", "./data/botchecker.db"),
 		LogLevel: env("LOG_LEVEL", "info"),
 	}

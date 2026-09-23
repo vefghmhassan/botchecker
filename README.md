@@ -31,7 +31,7 @@ cp .env.example .env
 docker compose up --build
 ```
 
-Then open <http://localhost:8080/> and sign in with `DASHBOARD_USER` /
+Then open <http://localhost:8081/> and sign in with `DASHBOARD_USER` /
 `DASHBOARD_PASS`.
 
 ## Dashboard
@@ -56,9 +56,9 @@ the dashboard works even when opened from a network that blocks CDNs.
 All endpoints require Basic Auth except `/healthz`.
 
 ```bash
-curl -u admin:$DASHBOARD_PASS -X POST localhost:8080/api/v1/scan   # → {"scan_id": N}
-curl -u admin:$DASHBOARD_PASS localhost:8080/api/v1/scan/N         # status and progress
-curl -u admin:$DASHBOARD_PASS localhost:8080/api/v1/blocked        # the actionable list
+curl -u admin:$DASHBOARD_PASS -X POST localhost:8081/api/v1/scan   # → {"scan_id": N}
+curl -u admin:$DASHBOARD_PASS localhost:8081/api/v1/scan/N         # status and progress
+curl -u admin:$DASHBOARD_PASS localhost:8081/api/v1/blocked        # the actionable list
 ```
 
 | Method | Path | Purpose |
