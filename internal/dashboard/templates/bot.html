@@ -1,0 +1,60 @@
+<h1>{{t "botpage.title"}}</h1>
+<p class="sub">{{t "botpage.sub"}} <a href="/settings">{{t "nav.settings"}}</a></p>
+
+<div class="cards">
+  <div class="card {{if .Enabled}}ok{{end}}">
+    <div class="n">{{if .Enabled}}{{t "botpage.on"}}{{else}}{{t "botpage.off"}}{{end}}</div><div class="l">{{t "botpage.accepting"}}</div></div>
+  <div class="card">
+    <div class="n">{{if .BotRunning}}{{t "botpage.polling"}}{{else}}{{t "botpage.idle"}}{{end}}</div><div class="l">{{t "botpage.loop"}}</div></div>
+  <div class="card">
+    <div class="n">{{len .AllowedIDs}}</div><div class="l">{{t "botpage.allowed"}}</div></div>
+  <div class="card {{if .Unauthorized}}bad{{end}}">
+    <div class="n">{{.Unauthorized}}</div><div class="l">{{t "botpage.refused"}}</div></div>
+</div>
+
+{{if .Unauthorized}}
+<div class="note err">
+  <strong>{{t "botpage.refusednote" .Unauthorized}}</strong>
+</div>
+{{end}}
+
+{{if and .Enabled (not .AllowedIDs)}}
+<div class="note err">
+  {{t "botpage.noallownote"}}
+</div>
+{{end}}
+
+<div class="panel">
+  <p class="sub">
+    {{t "botpage.allowedlist"}} {{if .AllowedIDs}}{{range .AllowedIDs}}<code>{{.}}</code> {{end}}{{else}}<span class="muted">{{t "botpage.none"}}</span>{{end}}
+    {{if not .LastUpdate.IsZero}}· {{t "botpage.lastupdate" (fmtTimeVal .LastUpdate)}}{{end}}
+  </p>
+</div>
+
+<h2>{{t "botpage.activity"}}</h2>
+<div class="panel">
+<table>
+<thead><tr><th>{{t "th.when"}}</th><th>{{t "th.from"}}</th><th>{{t "th.action"}}</th><th>{{t "th.detail"}}</th><th>{{t "th.result"}}</th></tr></thead>
+<tbody>
+{{range .Actions}}
+<tr>
+  <td class="muted">{{fmtTimeVal .Requested}}</td>
+  <td>{{if .Authorized}}<span class="mono">{{.TelegramID}}</span>
+      {{if .Username}}<span class="muted"> {{.Username}}</span>{{end}}
+      {{else}}<span class="badge" style="background:{{verdictColor "BLOCKED_IR"}}">{{t "botpage.refused0"}}</span>
+      <span class="mono"> {{.TelegramID}}</span>{{end}}</td>
+  <td class="mono">{{.Action}}</td>
+  <td class="muted">{{.Detail}}</td>
+  <td>
+    {{if .Error}}<span style="color:var(--bad)">{{.Error}}</span>
+    {{else if .OK}}<span style="color:var(--ok)">{{t "botpage.ok"}}</span>
+    {{else if .Authorized}}<span class="muted">—</span>
+    {{else}}<span class="muted">{{t "botpage.ignored"}}</span>{{end}}
+  </td>
+</tr>
+{{else}}
+<tr><td colspan="5" class="muted">{{t "botpage.empty"}}</td></tr>
+{{end}}
+</tbody>
+</table>
+</div>

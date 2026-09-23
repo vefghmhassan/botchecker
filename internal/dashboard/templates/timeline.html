@@ -1,0 +1,31 @@
+<h1>{{t "timeline.title" .Days}}</h1>
+<p class="sub">{{t "timeline.sub"}}</p>
+
+<div class="panel">
+  {{.Chart}}
+  <div class="legend">
+    {{range .Legend}}<span><i style="background:{{verdictColor .}}"></i>{{.}}</span>{{end}}
+  </div>
+</div>
+
+<h2>{{t "timeline.changes"}}</h2>
+<div class="panel">
+<table>
+<thead><tr><th>{{t "th.when"}}</th><th>{{t "th.endpoint"}}</th><th>{{t "th.change"}}</th></tr></thead>
+<tbody>
+{{range .Events}}
+<tr>
+  <td class="muted">{{fmtTimeVal .ChangedAt}}</td>
+  <td><a class="mono" href="/target/{{.Address}}/{{.Port}}">{{.Address}}:{{.Port}}</a></td>
+  <td>
+    {{if .FromVerdict}}<span class="badge" style="background:{{verdictColor .FromVerdict}}">{{.FromVerdict}}</span>
+    <span class="muted"> → </span>{{else}}<span class="muted">{{t "timeline.first"}} </span>{{end}}
+    <span class="badge" style="background:{{verdictColor .ToVerdict}}">{{.ToVerdict}}</span>
+  </td>
+</tr>
+{{else}}
+<tr><td colspan="3" class="muted">{{t "timeline.empty"}}</td></tr>
+{{end}}
+</tbody>
+</table>
+</div>

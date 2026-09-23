@@ -1,0 +1,107 @@
+<h1>{{t "overview.title"}}</h1>
+<p class="sub">
+  {{if .LastScan}}{{t "overview.lastscan" .LastScan.ID .LastScan.Trigger (fmtTime .LastScan.FinishedAt) .LastScan.ConfigCount .LastScan.TargetCount}}
+  {{else}}{{t "overview.noscan"}}{{end}}
+</p>
+
+{{if .Flash}}<div class="note">{{.Flash}}</div>{{end}}
+{{if .FlashErr}}<div class="note err">{{.FlashErr}}</div>{{end}}
+
+<div class="panel syncbar">
+  <form method="post" action="/inventory/update" class="inline" style="margin:0">
+    <input type="hidden" name="csrf" value="{{.CSRF}}">
+    <button type="submit">🔄 {{t "sync.button"}}</button>
+  </form>
+  <span class="muted">
+    {{if .Sync}}{{if not .Sync.At.IsZero}}
+      {{t "sync.last" (fmtTimeVal .Sync.At) .Sync.Endpoints .Sync.Configs}}
+      {{if not .Sync.Complete}}<span style="color:var(--warn)"> · {{t "sync.sampleonly"}}</span>{{end}}
+      {{if .Sync.Error}}<span style="color:var(--bad)"> · {{.Sync.Error}}</span>{{end}}
+    {{else}}{{t "sync.never"}}{{end}}{{else}}{{t "sync.never"}}{{end}}
+  </span>
+</div>
+
+{{if .Progress.Running}}
+<div class="note">
+  {{t "overview.inprogress" .Progress.ScanID .Progress.Phase .Progress.Done .Progress.Total}}{{if .Progress.Current}} · {{.Progress.Current}}{{end}}
+</div>
+{{end}}
+
+<div class="cards">
+  <div class="card ok">  <div class="n">{{.Counts.HEALTHY}}</div>      <div class="l">{{t "overview.card.healthy"}}</div></div>
+  <div class="card bad"> <div class="n">{{.Counts.BLOCKED_IR}}</div>   <div class="l">{{t "overview.card.blocked"}}</div></div>
+  <div class="card warn"><div class="n">{{.ExternalBlocked}}</div>     <div class="l">{{t "overview.card.external"}}</div></div>
+  <div class="card warn"><div class="n">{{.Counts.PARTIAL_BLOCK}}</div><div class="l">{{t "overview.card.partial"}}</div></div>
+  <div class="card down"><div class="n">{{.Counts.SERVER_DOWN}}</div>  <div class="l">{{t "overview.card.down"}}</div></div>
+  <div class="card">     <div class="n">{{.Total}}</div>               <div class="l">{{t "overview.card.total"}}</div></div>
+</div>
+
+{{if .Blocked}}
+<div class="note">
+  <strong>{{t "overview.blockednote" .Blocked}}</strong>
+  {{if .ExternalBlocked}}
+  <br>{{t "overview.externalnote" .ExternalBlocked}} <a href="/providers">{{t "nav.providers"}}</a>
+  {{end}}
+</div>
+{{end}}
+
+<div class="panel">
+<table>
+<thead><tr>
+  <th>{{t "th.endpoint"}}</th><th>{{t "th.verdict"}}</th><th>{{t "th.provider"}}</th><th>{{t "th.iran"}}</th><th>{{t "th.control"}}</th>
+  {{if .PanelOn}}<th class="right">{{t "th.online"}}</th>{{end}}
+  <th class="right">{{t "th.outages"}}</th><th>{{t "th.config"}}</th><th>{{t "th.since"}}</th><th>{{t "th.checked"}}</th>
+</tr></thead>
+<tbody>
+{{range .Targets}}
+<tr>
+  <td><a class="mono" href="/target/{{.Address}}/{{.Port}}">{{.Address}}:{{.Port}}</a>
+      {{if .CountryCode}}<span class="muted"> {{.CountryCode}}</span>{{end}}
+      {{if .Ads}}<span class="muted"> · ads</span>{{end}}</td>
+  <td><span class="badge" style="background:{{verdictColor .Verdict}}">{{verdictName .Verdict}}</span>
+      {{if and (needsConfirm .Verdict) (not .Confirmed)}}<span class="muted" title="the two probe rounds disagreed"> ?</span>{{end}}</td>
+  <td><span class="badge" style="background:{{providerColor .Provider}}">{{providerName .Provider}}</span>
+      {{if .AbuseBlocked}}<span class="muted" title="Hetzner has blocked this IP for abuse"> abuse</span>{{end}}
+      {{if .NotifyOnly}}<span class="muted" title="alerts only; never replaced automatically"> 🔒</span>{{end}}</td>
+  <td>{{.IROpen}}/{{.IRTotal}} {{t "overview.up"}}{{if .IRRefused}} <span class="muted">({{.IRRefused}} {{t "overview.refused"}})</span>{{end}}</td>
+  <td>{{.ControlOpen}}/{{.ControlTotal}}</td>
+  {{if $.PanelOn}}<td class="right muted">—</td>{{end}}
+  <td class="right">{{with index $.Outages .TargetID}}<strong>{{.}}</strong>{{else}}<span class="muted">—</span>{{end}}</td>
+  <td class="wrap-cell muted">{{names .Names}}</td>
+  <td class="muted">{{fmtTime .SinceAt}}</td>
+  <td class="muted">{{ago .CheckedAt}}</td>
+</tr>
+{{else}}
+<tr><td colspan="10" class="muted">{{t "overview.empty"}}</td></tr>
+{{end}}
+</tbody>
+</table>
+</div>
+
+<div class="legend">
+  {{range .Legend}}<span><i style="background:{{verdictColor .}}"></i>{{.}}</span>{{end}}
+</div>
+
+{{if .Gone}}
+<details class="panel gone">
+  <summary>{{t "sync.gonetitle" (len .Gone)}}</summary>
+  <p class="muted">{{t "sync.goneblurb"}}</p>
+  <table>
+    <thead><tr><th>{{t "th.endpoint"}}</th><th>{{t "th.verdict"}}</th><th>{{t "sync.gonesince"}}</th></tr></thead>
+    <tbody>
+    {{range .Gone}}
+    <tr class="muted">
+      <td class="mono">{{.Address}}:{{.Port}}</td>
+      <td>{{verdictName .Verdict}}</td>
+      <td>{{fmtTime .MissingSince}}</td>
+    </tr>
+    {{end}}
+    </tbody>
+  </table>
+</details>
+{{end}}
+
+<style>
+.syncbar{display:flex;align-items:center;gap:14px;padding:10px 16px;flex-wrap:wrap}
+details.gone summary{cursor:pointer;padding:4px 0}
+</style>

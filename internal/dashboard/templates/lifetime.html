@@ -1,0 +1,38 @@
+<h1>{{t "lifetime.title"}}</h1>
+<p class="sub">{{t "lifetime.sub"}}</p>
+
+<div class="cards">
+  <div class="card"><div class="n">{{printf "%.1f" .Summary.AvgDays}}</div><div class="l">{{t "lifetime.avg"}}</div></div>
+  <div class="card"><div class="n">{{printf "%.1f" .Summary.MedDays}}</div><div class="l">{{t "lifetime.median"}}</div></div>
+  <div class="card"><div class="n">{{printf "%.1f" .Summary.MinDays}}</div><div class="l">{{t "lifetime.min"}}</div></div>
+  <div class="card"><div class="n">{{printf "%.1f" .Summary.MaxDays}}</div><div class="l">{{t "lifetime.max"}}</div></div>
+  <div class="card"><div class="n">{{.Summary.Completed}}</div><div class="l">{{t "lifetime.ended"}}</div></div>
+  <div class="card ok"><div class="n">{{.Summary.Ongoing}}</div><div class="l">{{t "lifetime.ongoing"}}</div></div>
+</div>
+
+<div class="panel">
+  {{.Chart}}
+  <div class="legend">
+    <span><i style="background:{{verdictColor "HEALTHY"}}"></i>{{t "lifetime.legend.healthy"}}</span>
+    <span><i style="background:{{verdictColor "BLOCKED_IR"}}"></i>{{t "lifetime.legend.ended"}}</span>
+  </div>
+</div>
+
+<h2>{{t "lifetime.runs"}}</h2>
+<div class="panel">
+<table>
+<thead><tr><th>{{t "th.endpoint"}}</th><th>{{t "th.healthyfrom"}}</th><th>{{t "th.blockedat"}}</th><th class="right">{{t "th.days"}}</th></tr></thead>
+<tbody>
+{{range .Summary.Spans}}
+<tr>
+  <td><a class="mono" href="/target/{{.Address}}/{{.Port}}">{{.Address}}:{{.Port}}</a></td>
+  <td class="muted">{{fmtTimeVal .Start}}</td>
+  <td class="muted">{{if .Ended}}{{fmtTime .End}}{{else}}<span style="color:var(--ok)">{{t "lifetime.stillup"}}</span>{{end}}</td>
+  <td class="right">{{printf "%.1f" .Duration}}</td>
+</tr>
+{{else}}
+<tr><td colspan="4" class="muted">{{t "lifetime.empty"}}</td></tr>
+{{end}}
+</tbody>
+</table>
+</div>

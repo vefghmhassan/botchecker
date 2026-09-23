@@ -1,0 +1,49 @@
+<h1>{{t "providers.title"}}</h1>
+<p class="sub">{{t "providers.sub"}}</p>
+
+{{if .HetznerConfigured}}
+<div class="panel" style="padding:12px 16px">
+  <form method="post" action="/providers/refresh" class="inline" style="margin:0">
+    <input type="hidden" name="csrf" value="{{.CSRF}}">
+    <button type="submit" class="secondary">{{t "providers.refresh"}}</button>
+    <span class="muted" style="margin-inline-start:10px">{{t "providers.refreshhint"}}</span>
+  </form>
+</div>
+{{end}}
+
+{{if not .HetznerConfigured}}
+<div class="note">
+  {{t "providers.notoken"}} <a href="/settings">{{t "nav.settings"}}</a>
+</div>
+{{end}}
+
+<div class="cards">
+  <div class="card ok">  <div class="n">{{index .Counts "hetzner"}}</div>  <div class="l">{{t "provider.hetzner"}}</div></div>
+  <div class="card warn"><div class="n">{{index .Counts "external"}}</div> <div class="l">{{t "provider.external"}}</div></div>
+  <div class="card">     <div class="n">{{index .Counts "unknown"}}</div>  <div class="l">{{t "provider.unknown"}}</div></div>
+</div>
+
+<div class="panel">
+<table>
+<thead><tr>
+  <th>{{t "th.endpoint"}}</th><th>{{t "th.verdict"}}</th><th>{{t "th.provider"}}</th><th>{{t "th.hzserver"}}</th><th>{{t "th.kind"}}</th><th>{{t "th.replaceable"}}</th>
+</tr></thead>
+<tbody>
+{{range .Rows}}
+<tr>
+  <td><a class="mono" href="/target/{{.Address}}/{{.Port}}">{{.Address}}:{{.Port}}</a></td>
+  <td><span class="badge" style="background:{{verdictColor .Verdict}}">{{verdictName .Verdict}}</span></td>
+  <td><span class="badge" style="background:{{providerColor .Provider}}">{{providerName .Provider}}</span>
+      {{if .AbuseBlocked}}<span class="badge" style="background:{{verdictColor "BLOCKED_IR"}}">{{t "providers.abuse"}}</span>{{end}}</td>
+  <td class="muted">{{if .ServerName}}{{.ServerName}} <span class="muted">#{{.ServerID}}</span>{{else}}—{{end}}</td>
+  <td class="muted">{{if .Kind}}{{.Kind}}{{else}}—{{end}}</td>
+  <td>{{if .Replaceable}}<span style="color:var(--ok)">{{t "providers.yes"}}</span>
+      {{else if .NotifyOnly}}<span style="color:var(--warn)">{{t "providers.notifyonly"}}</span>
+      {{else}}<span class="muted">{{t "providers.manual"}}</span>{{end}}</td>
+</tr>
+{{else}}
+<tr><td colspan="6" class="muted">{{t "providers.empty"}}</td></tr>
+{{end}}
+</tbody>
+</table>
+</div>

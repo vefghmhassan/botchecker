@@ -1,0 +1,7 @@
+{
+  "de1.node.check-host.net": [{"address": "5.161.158.200", "time": 0.100207}],
+  "nl1.node.check-host.net": [{"address": "5.161.158.200", "time": 0.087282}],
+  "ir1.node.check-host.net": [{"error": "Connection timed out"}],
+  "ir2.node.check-host.net": [{"error": "Connection timed out"}],
+  "ir3.node.check-host.net": null
+}

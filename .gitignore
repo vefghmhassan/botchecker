@@ -1,0 +1,21 @@
+# secrets and local state
+.env
+.env.*
+!.env.example
+data/
+*.db
+*.db-shm
+*.db-wal
+*.key
+*.log
+
+# binaries
+/botchecker
+/botchecker.old
+/botchecker.prev
+/tryserver
+
+# local experiments (holds its own .env, database and logs)
+/swaptest/
+
+.DS_Store

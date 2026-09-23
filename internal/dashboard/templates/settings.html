@@ -1,0 +1,75 @@
+<h1>{{t "settings.title"}}</h1>
+<p class="sub">{{t "settings.sub"}}</p>
+
+{{if .Flash}}<div class="note">{{.Flash}}</div>{{end}}
+{{if .FlashErr}}<div class="note err">{{.FlashErr}}</div>{{end}}
+
+{{range .Groups}}
+<h2>{{.Title}}</h2>
+<div class="panel">
+  <p class="sub">{{.Blurb}}</p>
+  <form method="post" action="/settings">
+    <input type="hidden" name="csrf" value="{{$.CSRF}}">
+    <input type="hidden" name="group" value="{{.Name}}">
+
+    {{range .Settings}}
+    <div class="field">
+      <label for="{{.Key}}">{{.Label}}</label>
+
+      {{if eq .Kind "choice"}}
+        {{$cur := .Value}}
+        <div class="row">
+          <select id="{{.Key}}" name="{{.Key}}">
+            {{range choices .Key}}
+            <option value="{{.}}" {{if eq . $cur}}selected{{end}}>{{langName .}}</option>
+            {{end}}
+          </select>
+          <span class="state muted">{{t "settings.from" .Source}}</span>
+        </div>
+        <div class="muted help">{{.Help}}</div>
+      {{else if eq .Kind "bool"}}
+        <div class="row">
+          <input type="checkbox" id="{{.Key}}" name="{{.Key}}" value="true" {{if eq .Value "true"}}checked{{end}}>
+          <span class="muted">{{.Help}}</span>
+        </div>
+      {{else if .Secret}}
+        <div class="row">
+          <input type="password" id="{{.Key}}" name="{{.Key}}" autocomplete="new-password"
+                 placeholder="{{if .Configured}}{{t "settings.keep"}}{{else}}{{t "settings.notset"}}{{end}}">
+          <span class="state">
+            {{if .Configured}}
+              <span style="color:var(--ok)">{{t "settings.set"}}</span> <code>{{.Hint}}</code>
+              <span class="muted">· {{t "settings.from" .Source}}</span>
+            {{else}}<span class="muted">{{t "settings.notset"}}</span>{{end}}
+          </span>
+        </div>
+        {{if .Configured}}
+        <label class="clear"><input type="checkbox" name="clear__{{.Key}}" value="1"> {{t "settings.remove"}}</label>
+        {{end}}
+        <div class="muted help">{{.Help}}</div>
+      {{else}}
+        <div class="row">
+          <input type="text" id="{{.Key}}" name="{{.Key}}" value="{{.Value}}">
+          <span class="state muted">{{if .Configured}}{{t "settings.from" .Source}}{{else}}{{t "settings.notset"}}{{end}}</span>
+        </div>
+        <div class="muted help">{{.Help}}</div>
+      {{end}}
+
+      {{if .Env}}<div class="muted help">env: <code>{{.Env}}</code></div>{{end}}
+    </div>
+    {{end}}
+
+    <div class="actions">
+      <button type="submit">{{t "settings.save"}}</button>
+    </div>
+  </form>
+
+  {{if .Testable}}
+  <form method="post" action="/settings/test" class="inline">
+    <input type="hidden" name="csrf" value="{{$.CSRF}}">
+    <input type="hidden" name="group" value="{{.Name}}">
+    <button type="submit" class="secondary">{{t "settings.test"}}</button>
+  </form>
+  {{end}}
+</div>
+{{end}}

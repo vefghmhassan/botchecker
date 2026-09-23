@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="{{.Lang}}" dir="{{.Dir}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+{{if .Refresh}}<meta http-equiv="refresh" content="{{.Refresh}}">{{end}}
+<title>{{.Title}} — botchecker</title>
+<style>
+:root{
+  --bg:#f6f7f9; --panel:#ffffff; --ink:#1b2129; --muted:#6a7482; --line:#dfe3e8;
+  --accent:#2f6fd0; --track:#e8ebef;
+  --ok:#2f9e5e; --warn:#d98324; --bad:#c8433a; --closed:#8a7fb5; --down:#6b7785; --unk:#9aa4b0;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#11151a; --panel:#181d24; --ink:#e6eaef; --muted:#93a0af; --line:#27303a;
+    --accent:#6fa8ff; --track:#222a33;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:14px/1.5 ui-sans-serif,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+html[dir="rtl"] body{font-family:Vazirmatn,"IRANSans",Tahoma,ui-sans-serif,-apple-system,sans-serif}
+/* Addresses, ports and hop lists stay left-to-right inside Persian text. */
+html[dir="rtl"] code,html[dir="rtl"] .mono,html[dir="rtl"] .hops{direction:ltr;text-align:start}
+html[dir="rtl"] .chart{direction:ltr}
+.langswitch{display:flex;gap:6px}
+.langswitch button{padding:4px 10px;font-size:12px;background:var(--track);color:var(--muted);
+  border:1px solid var(--line)}
+.langswitch button.on{background:var(--accent);color:#fff;border-color:transparent}
+select{padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);
+  color:var(--ink);font-family:inherit;font-size:13px;min-width:160px}
+header{background:var(--panel);border-bottom:1px solid var(--line);padding:0 16px}
+.wrap{max-width:1180px;margin:0 auto;padding:16px}
+nav{display:flex;flex-wrap:wrap;gap:4px;align-items:center;max-width:1180px;margin:0 auto;padding:10px 0}
+nav .brand{font-weight:700;margin-inline-end:14px;letter-spacing:.2px}
+nav a{color:var(--muted);text-decoration:none;padding:6px 10px;border-radius:6px}
+nav a:hover{background:var(--track);color:var(--ink)}
+nav a.on{background:var(--accent);color:#fff}
+nav .spacer{flex:1}
+nav .meta{color:var(--muted);font-size:12px}
+h1{font-size:19px;margin:0 0 4px}
+h2{font-size:15px;margin:26px 0 10px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+.sub{color:var(--muted);margin:0 0 18px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:18px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px}
+.card .n{font-size:26px;font-weight:700;line-height:1.1}
+.card .l{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.5px;margin-top:4px}
+.card.ok .n{color:var(--ok)} .card.bad .n{color:var(--bad)}
+.card.warn .n{color:var(--warn)} .card.down .n{color:var(--down)}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+th,td{text-align:start;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+tr:last-child td{border-bottom:none}
+td.wrap-cell{white-space:normal;max-width:280px}
+a{color:var(--accent)}
+code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px}
+.badge{display:inline-block;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:700;
+  letter-spacing:.3px;color:#fff;white-space:nowrap}
+.muted{color:var(--muted)}
+.right{text-align:end}
+.chart{width:100%;height:auto;display:block}
+.chart .grid{stroke:var(--line);stroke-width:1}
+.chart .axisline{stroke:var(--muted);stroke-width:1}
+.chart .axis{fill:var(--muted);font-size:11px}
+.chart .rowlabel{fill:var(--ink);font-size:12px;font-family:ui-monospace,Menlo,monospace}
+.chart .rowvalue{fill:var(--muted);font-size:11px}
+.chart .track{fill:var(--track)}
+.chart .empty{fill:var(--muted);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-inline-end:5px;vertical-align:-1px}
+.hops{margin:0;padding:0;list-style:none;font-family:ui-monospace,Menlo,monospace;font-size:12.5px}
+.hops li{padding:3px 0;border-bottom:1px solid var(--line);display:flex;gap:10px}
+.hops li:last-child{border-bottom:none}
+.hops .i{color:var(--muted);width:28px;text-align:end}
+.hops .dead{color:var(--muted)}
+.hops .last{color:var(--bad);font-weight:700}
+.note{border-inline-start:3px solid var(--accent);padding:10px 14px;background:var(--track);border-radius:0 8px 8px 0;margin:14px 0}
+.note.err{border-inline-start-color:var(--bad)}
+.field{margin:0 0 16px;padding:0 0 14px;border-bottom:1px solid var(--line)}
+.field:last-of-type{border-bottom:none}
+.field label{display:block;font-weight:600;margin-bottom:6px}
+.field .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.field input[type=text],.field input[type=password]{flex:1;min-width:240px;padding:7px 10px;
+  border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);
+  font-family:ui-monospace,Menlo,monospace;font-size:13px}
+.field input:focus{outline:2px solid var(--accent);outline-offset:-1px}
+.field .state{font-size:12px;white-space:nowrap}
+.field .help{font-size:12px;margin-top:5px}
+.field label.clear{font-weight:400;font-size:12px;color:var(--muted);margin-top:7px;display:flex;
+  align-items:center;gap:6px}
+.actions{margin-top:4px}
+button{padding:8px 16px;border:none;border-radius:6px;background:var(--accent);color:#fff;
+  font-weight:600;font-size:13px;cursor:pointer;font-family:inherit}
+button:hover{filter:brightness(1.08)}
+button.secondary{background:var(--track);color:var(--ink);border:1px solid var(--line)}
+form.inline{display:inline-block;margin-top:10px}
+footer{color:var(--muted);font-size:12px;padding:20px 0;text-align:center}
+@media(max-width:700px){
+  table{display:block;overflow-x:auto}
+  .wrap{padding:12px}
+}
+</style>
+</head>
+<body>
+<header>
+  <nav>
+    <span class="brand">botchecker</span>
+    <a href="/"          class="{{if eq .Nav "overview"}}on{{end}}">{{t "nav.status"}}</a>
+    <a href="/timeline"  class="{{if eq .Nav "timeline"}}on{{end}}">{{t "nav.timeline"}}</a>
+    <a href="/lifetime"  class="{{if eq .Nav "lifetime"}}on{{end}}">{{t "nav.lifetime"}}</a>
+    <a href="/asn"       class="{{if eq .Nav "asn"}}on{{end}}">{{t "nav.operators"}}</a>
+    <a href="/providers" class="{{if eq .Nav "providers"}}on{{end}}">{{t "nav.providers"}}</a>
+    <a href="/projects"  class="{{if eq .Nav "projects"}}on{{end}}">{{t "nav.projects"}}</a>
+    <a href="/provisions" class="{{if eq .Nav "provisions"}}on{{end}}">{{t "nav.provisions"}}</a>
+    <a href="/bot"       class="{{if eq .Nav "bot"}}on{{end}}">{{t "nav.bot"}}</a>
+    <a href="/settings"  class="{{if eq .Nav "settings"}}on{{end}}">{{t "nav.settings"}}</a>
+    <span class="spacer"></span>
+    <form method="post" action="/language" class="langswitch">
+      <input type="hidden" name="csrf" value="{{.CSRF}}">
+      {{range .Languages}}
+      <button type="submit" name="lang" value="{{.Code}}" class="{{if eq .Code $.Lang}}on{{end}}">{{.Name}}</button>
+      {{end}}
+    </form>
+    <span class="meta">{{if .Scanning}}{{t "nav.scanning"}}{{else}}{{t "nav.idle"}}{{end}} · {{.Now}}</span>
+  </nav>
+</header>
+<div class="wrap">
+{{embed}}
+</div>
+<footer>{{t "footer.probes" .IRNodeCount}} · {{t "footer.control" .ControlLabel}} · {{t "footer.times" .TZ}}</footer>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<h1>{{t "projects.title"}}</h1>
+<p class="sub">{{t "projects.sub"}}</p>
+
+{{if .Flash}}<div class="note">{{.Flash}}</div>{{end}}
+{{if .FlashErr}}<div class="note err">{{.FlashErr}}</div>{{end}}
+
+<form method="post" action="/projects" id="projects-form">
+  <input type="hidden" name="csrf" value="{{.CSRF}}">
+
+  <div class="panel">
+    <table class="projects">
+      <thead><tr>
+        <th>{{t "projects.name"}}</th>
+        <th>{{t "projects.token"}}</th>
+        <th>{{t "projects.snapshot"}}</th>
+        <th>{{t "projects.type"}}</th>
+        <th>{{t "projects.types"}}</th>
+        <th>{{t "projects.locations"}}</th>
+        <th>{{t "projects.max"}}</th>
+        <th></th>
+      </tr></thead>
+      <tbody id="rows">
+        {{range $i, $r := .Rows}}
+        <tr class="prow">
+          <td><input type="text" name="slug_{{$i}}" value="{{$r.Slug}}" size="8" required></td>
+          <td>
+            <input type="password" name="token_{{$i}}" autocomplete="new-password" size="12"
+                   placeholder="{{if $r.TokenSet}}{{t "settings.keep"}}{{else}}{{t "settings.notset"}}{{end}}">
+            {{if $r.TokenSet}}<code class="muted">{{$r.TokenHint}}</code>{{end}}
+          </td>
+          <td><input type="text" name="snapshot_{{$i}}" value="{{$r.SnapshotID}}" size="10"></td>
+          <td><input type="text" name="type_{{$i}}" value="{{$r.ServerType}}" size="7"></td>
+          <td><input type="text" name="types_{{$i}}" value="{{$r.TypesText}}" size="16"
+                     placeholder="hel1:cpx32"></td>
+          <td><input type="text" name="locations_{{$i}}" value="{{$r.LocationsText}}" size="14"
+                     placeholder="ash,hil"></td>
+          <td><input type="number" name="max_{{$i}}" value="{{if $r.MaxServers}}{{$r.MaxServers}}{{end}}"
+                     min="0" style="width:4.5em"></td>
+          <td class="right nowrap">
+            <button type="submit" formaction="/projects/identify" name="slug" value="{{$r.Slug}}"
+                    class="secondary" title="{{t "projects.identifyhint"}}">{{t "projects.identify"}}</button>
+            <button type="button" class="secondary drop" title="{{t "projects.remove"}}">✕</button>
+          </td>
+        </tr>
+        <tr class="prow-note">
+          <td colspan="8" class="muted">
+            {{if $r.Usable}}<span style="color:var(--ok)">{{t "projects.canbuild"}}</span>
+            {{else}}<span style="color:var(--bad)">{{t "projects.cannotbuild"}} {{$r.Why}}</span>{{end}}
+          </td>
+        </tr>
+        {{else}}
+        <tr id="empty-note"><td colspan="8" class="muted">{{t "projects.empty"}}</td></tr>
+        {{end}}
+      </tbody>
+    </table>
+
+    <div class="actions">
+      <button type="button" id="add-row" class="secondary">＋ {{t "projects.add"}}</button>
+      <button type="submit">{{t "settings.save"}}</button>
+    </div>
+    <div class="muted help">{{t "projects.help"}}</div>
+  </div>
+</form>
+
+<template id="row-template">
+  <tr class="prow">
+    <td><input type="text" name="slug_IDX" size="8" required></td>
+    <td><input type="password" name="token_IDX" autocomplete="new-password" size="12"
+               placeholder="{{t "settings.notset"}}"></td>
+    <td><input type="text" name="snapshot_IDX" size="10"></td>
+    <td><input type="text" name="type_IDX" size="7"></td>
+    <td><input type="text" name="types_IDX" size="16" placeholder="hel1:cpx32"></td>
+    <td><input type="text" name="locations_IDX" size="14" placeholder="ash,hil"></td>
+    <td><input type="number" name="max_IDX" min="0" style="width:4.5em"></td>
+    <td class="right nowrap">
+      <button type="button" class="secondary drop" title="{{t "projects.remove"}}">✕</button>
+    </td>
+  </tr>
+</template>
+
+<style>
+table.projects td,table.projects th{padding:6px 8px;vertical-align:middle}
+table.projects input{width:100%;box-sizing:border-box}
+tr.prow-note td{padding-top:0;padding-bottom:10px;font-size:12px}
+.nowrap{white-space:nowrap}
+</style>
+
+<script>
+(function () {
+  var rows = document.getElementById("rows");
+  var tpl = document.getElementById("row-template");
+  // Indexes only have to be unique within one submit; the handler reads them
+  // sparsely, so removing a row never needs the rest renumbering.
+  var next = rows.querySelectorAll("tr.prow").length;
+
+  document.getElementById("add-row").addEventListener("click", function () {
+    var note = document.getElementById("empty-note");
+    if (note) { note.remove(); }
+    var html = tpl.innerHTML.replace(/IDX/g, String(next++));
+    var holder = document.createElement("tbody");
+    holder.innerHTML = html.trim();
+    var row = holder.firstElementChild;
+    rows.appendChild(row);
+    var first = row.querySelector("input");
+    if (first) { first.focus(); }
+  });
+
+  rows.addEventListener("click", function (e) {
+    var btn = e.target.closest(".drop");
+    if (!btn) { return; }
+    var row = btn.closest("tr.prow");
+    // A removed row submits no name, and the handler skips the gap — so the
+    // project simply stops being in the list.
+    var note = row.nextElementSibling;
+    if (note && note.classList.contains("prow-note")) { note.remove(); }
+    row.remove();
+  });
+})();
+</script>

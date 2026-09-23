@@ -1,0 +1,50 @@
+{
+  "no_ads": {
+    "ID": 26874,
+    "CreatedAt": "2026-09-18T03:07:20.338475+03:30",
+    "UpdatedAt": "2026-09-18T03:07:20.338475+03:30",
+    "Name": "Am-15",
+    "Address": "174.138.13.95",
+    "Port": 443,
+    "Protocol": "vless",
+    "Tags": "",
+    "Ads": false,
+    "CountryCode": "NL",
+    "CountryFlag": "/country/NL.png",
+    "IsActive": true,
+    "Capacity": 0,
+    "RawLink": "vless://410540a1-5ffc-4dc8-8c55-1eb4ed884043@174.138.13.95:443?type=tcp#Am"
+  },
+  "ads": {
+    "ID": 30879,
+    "CreatedAt": "2026-09-20T12:32:20.719994+03:30",
+    "UpdatedAt": "2026-09-20T12:32:20.719994+03:30",
+    "Name": "fi  10 ads-113",
+    "Address": "62.238.45.47",
+    "Port": 8443,
+    "Protocol": "vless",
+    "Tags": "",
+    "Ads": true,
+    "CountryCode": "FI",
+    "CountryFlag": "/country/FI.png",
+    "IsActive": true,
+    "Capacity": 0,
+    "RawLink": "vless://a2f5aedb-7cdf-4ae2-bb48-fc6f5398eeb7@62.238.45.47:8443?type=tcp#fi"
+  },
+  "no_ads_list": [
+    { "ID": 26874, "Name": "Am-15", "Address": "174.138.13.95", "Port": 443, "Protocol": "vless", "Ads": false, "CountryCode": "NL", "IsActive": true },
+    { "ID": 23237, "Name": "fi 3 one-84", "Address": "77.42.38.98", "Port": 443, "Protocol": "vless", "Ads": false, "CountryCode": "FI", "IsActive": true },
+    { "ID": 30257, "Name": "fi 9c-191", "Address": "2.29.50.112", "Port": 25245, "Protocol": "vless", "Ads": false, "CountryCode": "FI", "IsActive": true },
+    { "ID": 25572, "Name": "Back-Ash-17", "Address": "5.161.139.104", "Port": 2020, "Protocol": "vless", "Ads": false, "CountryCode": "US", "IsActive": true },
+    { "ID": 28888, "Name": "ADMeo-4ocn2u5m", "Address": "65.109.185.191", "Port": 8443, "Protocol": "vless", "Ads": false, "CountryCode": "FI", "IsActive": true },
+    { "ID": 29758, "Name": "fi  7-592", "Address": "2.29.60.163", "Port": 443, "Protocol": "vless", "Ads": false, "CountryCode": "FI", "IsActive": true },
+    { "ID": 30378, "Name": "ash-one-C-A-12", "Address": "5.161.158.200", "Port": 443, "Protocol": "vless", "Ads": false, "CountryCode": "US", "IsActive": true },
+    { "ID": 26990, "Name": "Helk--new29", "Address": "65.109.216.204", "Port": 443, "Protocol": "vless", "Ads": false, "CountryCode": "FI", "IsActive": true },
+    { "ID": 29750, "Name": "fi  7-584", "Address": "2.29.60.163", "Port": 443, "Protocol": "vless", "Ads": false, "CountryCode": "FI", "IsActive": true },
+    { "ID": 30425, "Name": "ash-one-C-A-59", "Address": "5.161.158.200", "Port": 443, "Protocol": "vless", "Ads": false, "CountryCode": "US", "IsActive": true },
+    { "ID": 23267, "Name": "fi 3 one-114", "Address": "77.42.38.98", "Port": 443, "Protocol": "vless", "Ads": false, "CountryCode": "FI", "IsActive": true }
+  ],
+  "ads_list": [
+    { "ID": 30879, "Name": "fi  10 ads-113", "Address": "62.238.45.47", "Port": 8443, "Protocol": "vless", "Ads": true, "CountryCode": "FI", "IsActive": true }
+  ]
+}

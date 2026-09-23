@@ -1,0 +1,27 @@
+<h1>{{t "asn.title"}}</h1>
+<p class="sub">{{t "asn.sub" .Days}}</p>
+
+<div class="panel">
+  {{.Chart}}
+</div>
+
+<div class="panel">
+<table>
+<thead><tr><th>{{t "th.asn"}}</th><th>{{t "th.nodes"}}</th><th>{{t "th.city"}}</th><th class="right">{{t "th.probes"}}</th><th class="right">{{t "th.timedout"}}</th><th class="right">{{t "th.connected"}}</th><th class="right">{{t "th.failrate"}}</th></tr></thead>
+<tbody>
+{{range .Stats}}
+<tr>
+  <td class="mono">{{.ASN}}</td>
+  <td class="muted">{{.Nodes}}</td>
+  <td class="muted">{{.City}}</td>
+  <td class="right">{{.Total}}</td>
+  <td class="right">{{.Failed}}</td>
+  <td class="right">{{.Open}}</td>
+  <td class="right">{{printf "%.1f%%" .FailPct}}</td>
+</tr>
+{{else}}
+<tr><td colspan="7" class="muted">{{t "asn.empty"}}</td></tr>
+{{end}}
+</tbody>
+</table>
+</div>

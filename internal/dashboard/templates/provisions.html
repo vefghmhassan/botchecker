@@ -1,0 +1,87 @@
+<h1>{{t "provisions.title"}}</h1>
+<p class="sub">{{t "provisions.sub"}}</p>
+
+<div class="note">
+  {{t "provisions.state" (ternary .Enabled (t "botpage.on") (t "botpage.off")) (ternary .DryRun (t "provisions.dry") "")}} <a href="/settings">{{t "nav.settings"}}</a>
+</div>
+
+<div class="panel">
+<table>
+<thead><tr>
+  <th>{{t "th.when"}}</th><th>{{t "th.endpoint"}}</th><th>{{t "th.status"}}</th><th>{{t "th.provider"}}</th>
+  <th class="right">{{t "th.outages"}}</th><th class="right">{{t "th.online"}}</th>
+  <th>{{t "th.newaddress"}}</th><th>{{t "th.verify"}}</th><th>{{t "th.handoff"}}</th>
+</tr></thead>
+<tbody>
+{{range .Provisions}}
+<tr>
+  <td class="muted">{{fmtTimeVal .TriggeredAt}}</td>
+  <td><a class="mono" href="/target/{{.Address}}/{{.Port}}">{{.Address}}:{{.Port}}</a></td>
+  <td><span class="badge" style="background:{{provisionColor .Status}}">{{.Status}}</span>
+      {{if .DryRun}}<span class="muted"> dry</span>{{end}}
+      {{if .Error}}<div class="muted">{{.Error}}</div>{{end}}</td>
+  <td><span class="badge" style="background:{{providerColor .Provider}}">{{providerName .Provider}}</span></td>
+  <td class="right">{{.OutageCount}}</td>
+  <td class="right">{{if .OnlineCount}}{{.OnlineCount}}{{else}}<span class="muted">—</span>{{end}}</td>
+  <td class="mono">{{if .NewAddress}}{{.NewAddress}}:{{.NewPort}}{{else}}<span class="muted">—</span>{{end}}</td>
+  <td>{{if .VerifyVerdict}}<span class="badge" style="background:{{verdictColor .VerifyVerdict}}">{{verdictName .VerifyVerdict}}</span>{{else}}<span class="muted">—</span>{{end}}</td>
+  <td class="muted">{{if .HandoffStatus}}{{.HandoffStatus}}{{else}}—{{end}}</td>
+</tr>
+{{else}}
+<tr><td colspan="9" class="muted">{{t "provisions.empty"}}</td></tr>
+{{end}}
+</tbody>
+</table>
+</div>
+
+<h2>{{t "provisions.alerts"}}</h2>
+<div class="panel">
+<table>
+<thead><tr><th>{{t "th.when"}}</th><th>{{t "th.kindcol"}}</th><th>{{t "th.delivered"}}</th><th>{{t "th.detail"}}</th></tr></thead>
+<tbody>
+{{range .Notifications}}
+<tr>
+  <td class="muted">{{fmtTimeVal .SentAt}}</td>
+  <td class="mono">{{.Kind}}</td>
+  <td>{{if .OK}}<span style="color:var(--ok)">{{t "provisions.sent"}}</span>{{else}}<span style="color:var(--bad)">{{t "provisions.failed"}}</span>{{end}}</td>
+  <td class="muted wrap-cell">{{if .Error}}{{.Error}}{{else}}{{firstLine .Message}}{{end}}</td>
+</tr>
+{{else}}
+<tr><td colspan="4" class="muted">{{t "provisions.noalerts"}}</td></tr>
+{{end}}
+</tbody>
+</table>
+</div>
+
+<h2>{{t "ledger.title"}}</h2>
+<p class="sub">{{t "ledger.sub"}}</p>
+<div class="panel">
+<table>
+<thead><tr>
+  <th>{{t "th.address"}}</th><th>{{t "th.reason"}}</th><th>{{t "th.when"}}</th>
+  <th>{{t "th.verify"}}</th><th>{{t "th.provider"}}</th><th>{{t "th.detail"}}</th><th></th>
+</tr></thead>
+<tbody>
+{{range .Ledger}}
+<tr{{if not .Active}} class="muted"{{end}}>
+  <td class="mono">{{.Address}}</td>
+  <td>{{ledgerReason .Reason}}</td>
+  <td class="muted">{{fmtTimeVal .RecordedAt}}</td>
+  <td>{{if .Verdict}}<span class="badge" style="background:{{verdictColor .Verdict}}">{{verdictName .Verdict}}</span>{{else}}<span class="muted">&mdash;</span>{{end}}</td>
+  <td class="mono muted">{{if .Project}}{{.Project}}{{else}}&mdash;{{end}}</td>
+  <td class="muted wrap-cell">{{if .Note}}{{.Note}}{{else}}&mdash;{{end}}</td>
+  <td class="right">
+    {{if .Active}}
+    <form method="post" action="/provisions/release/{{.Address}}" class="inline" style="margin:0">
+      <input type="hidden" name="csrf" value="{{$.CSRF}}">
+      <button type="submit" class="secondary">{{t "ledger.release"}}</button>
+    </form>
+    {{else}}<span class="muted">{{t "ledger.releasedon"}} {{fmtTimeVal .ReleasedAt}}</span>{{end}}
+  </td>
+</tr>
+{{else}}
+<tr><td colspan="7" class="muted">{{t "ledger.empty"}}</td></tr>
+{{end}}
+</tbody>
+</table>
+</div>

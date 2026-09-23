@@ -1,0 +1,6 @@
+{
+  "de1.node.check-host.net": [{"error": "Connection refused"}],
+  "nl1.node.check-host.net": [{"error": "Connection timed out"}],
+  "ir1.node.check-host.net": [{"error": "Connection timed out"}],
+  "ir2.node.check-host.net": [{"error": "Connection timed out"}]
+}

@@ -1,0 +1,95 @@
+<h1 class="mono">{{.Address}}:{{.Port}}</h1>
+<p class="sub">
+  {{if .Status}}<span class="badge" style="background:{{verdictColor .Status.Verdict}}">{{verdictName .Status.Verdict}}</span>
+  since {{fmtTime .Status.SinceAt}} · {{names .Status.Names}}
+  {{if .Status.ConfigIDs}}<span class="muted"> · config {{intJoin .Status.ConfigIDs ", "}}</span>{{end}}
+  {{else}}{{t "target.noresult"}}{{end}}
+</p>
+
+<div class="panel">
+  <form method="post" action="/target/{{.Address}}/{{.Port}}/notify-only">
+    <input type="hidden" name="csrf" value="{{.CSRF}}">
+    <label class="clear" style="margin:0">
+      <input type="checkbox" name="notify_only" value="1" {{if and .Status .Status.NotifyOnly}}checked{{end}}>
+      <strong>{{t "target.notifyonly"}}</strong> — {{t "target.notifyonlyhint"}}
+    </label>
+    <div class="actions" style="margin-top:10px"><button type="submit">{{t "target.apply"}}</button></div>
+  </form>
+</div>
+
+{{if .Traceroute}}
+<h2>{{t "target.packets"}}</h2>
+<div class="panel">
+  <p class="sub">
+    {{t "target.packetssub" (shortNode .Traceroute.Node) .Traceroute.LastHop .Traceroute.DeadHops}}
+    {{if .Traceroute.LastHopPrivate}}
+      {{t "target.private"}}
+    {{else}}
+      {{t "target.public"}}
+    {{end}}
+  </p>
+  <ul class="hops">
+  {{range .Hops}}
+    <li>
+      <span class="i">{{.Index}}</span>
+      {{if .Responded}}
+        <span class="{{if eq .Host $.Traceroute.LastHop}}last{{end}}">{{.Host}}</span>
+        <span class="muted">{{times .Times}}</span>
+      {{else}}
+        <span class="dead">* * *</span>
+      {{end}}
+    </li>
+  {{end}}
+  </ul>
+</div>
+{{end}}
+
+<h2>{{t "target.history"}}</h2>
+<div class="panel">
+<table>
+<thead><tr><th>{{t "th.when"}}</th><th>{{t "th.change"}}</th></tr></thead>
+<tbody>
+{{range .Events}}
+<tr>
+  <td class="muted">{{fmtTimeVal .ChangedAt}}</td>
+  <td>
+    {{if .FromVerdict}}<span class="badge" style="background:{{verdictColor .FromVerdict}}">{{.FromVerdict}}</span>
+    <span class="muted"> → </span>{{else}}<span class="muted">{{t "timeline.first"}} </span>{{end}}
+    <span class="badge" style="background:{{verdictColor .ToVerdict}}">{{.ToVerdict}}</span>
+  </td>
+</tr>
+{{else}}
+<tr><td colspan="2" class="muted">{{t "target.nohistory"}}</td></tr>
+{{end}}
+</tbody>
+</table>
+</div>
+
+<h2>{{t "target.probes"}}</h2>
+{{range .Results}}
+<div class="panel">
+  <p class="sub">
+    <span class="badge" style="background:{{verdictColor .Verdict}}">{{verdictName .Verdict}}</span>
+    {{fmtTimeVal .CheckedAt}}
+    {{if not .Confirmed}}<span class="muted"> · {{t "target.unconfirmed"}}</span>{{end}}
+    {{if .Link}} · <a href="{{.Link}}" rel="noreferrer noopener">{{t "target.report"}}</a>{{end}}
+  </p>
+  <table>
+  <thead><tr><th>{{t "th.node"}}</th><th>{{t "th.location"}}</th><th>{{t "th.asn"}}</th><th>{{t "th.outcome"}}</th><th class="right">{{t "th.rtt"}}</th><th>{{t "th.detail"}}</th></tr></thead>
+  <tbody>
+  {{range .NodeResults}}
+  <tr>
+    <td class="mono">{{shortNode .Node}}</td>
+    <td class="muted">{{.CountryCode}} {{.City}}</td>
+    <td class="mono muted">{{.ASN}}</td>
+    <td><span class="badge" style="background:{{outcomeColor .Outcome}}">{{.Outcome}}</span></td>
+    <td class="right">{{if .RTTms}}{{printf "%.0f ms" .RTTms}}{{else}}<span class="muted">—</span>{{end}}</td>
+    <td class="muted">{{.Detail}}</td>
+  </tr>
+  {{end}}
+  </tbody>
+  </table>
+</div>
+{{else}}
+<div class="panel"><p class="muted">{{t "target.noprobes"}}</p></div>
+{{end}}
